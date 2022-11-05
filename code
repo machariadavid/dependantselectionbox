@@ -1,1 +1,106 @@
+<?php
+require_once("dbcontroller.php");
+$db_handle = new DBcontroller();
+$query="SELECT *FROM country";
+$results = $db_handle->runQuery($query);
+?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Dropdown</title>
+</head>
+<style type="text/css">
+	body{
+		width: 800px;
+		font-family: calibri;
+		padding: 0;
+		margin: 0 auto;
+	}
+	.frm{
+		border:1px sol  id #7ddaff;
+		background-color: #b4c8d0;
+		margin: 0px auto;
+		border-radius: 4px;
+	}
+	.InputBox{
+		padding: 10px;
+		border: #bdbdbd 1px solid;
+		border-radius: 4px;
+		background-color: #FFF;
+		width:  50%;
+	}
+	.row{
+		padding-bottom: 15px;
+		padding-left: 150px;
 
+
+
+		}
+	
+</style>
+<script src="jquery.main.js" type="text/javascript"></script>
+<script type="text/javascript">
+	function getState(val){
+		$.ajax({
+			type: "POST",
+			url: "getState.php",
+			data: 'countryid='+val,
+			success:function(data){
+				$("#state-list").html(data);
+				getCity() ;
+			}
+		});
+	}
+	function getCity(val){
+		$.ajax({
+			type: "POST",
+			url: "getCity.php",
+			data: 'Stateid='+val,
+			success:function(data){
+				$("#City-list").html(data);
+				 
+			}
+		});
+	}
+</script>
+<body>
+	<div class="frm">
+		<h2>dependent dropdown-countries, states and cities</h2>
+		<div class="row">
+			<label>Country: </label>
+			<select name="country" id="country-list" class="InputBox" onChange="getState(this.value);">
+				<option value disabled selected>Select Country</option>
+				<?php
+	foreach($results as $country) {
+		?>
+		<option value="<?php echo $country["id"]; ?>"><?php echo $country["country_name"]; ?></option>
+		<?php
+	}
+	?>
+</select>
+				<!-- <option value="">--Select Category--</option>
+                                    <option value="Music">Music</option>
+                                    <option value="Articles">Articles & journals</option>
+                                    <option value="Articles">Writing</option>
+                                    <option value="Music">Poetry</option>
+                                    <option value="Music">News </option>
+			</select>    -->
+	</div>
+	<div class="row"> 
+			<label>State: </label>
+			<select name="State" id="state-list" class="InputBox" onChange="getcity(this.value);">
+				<option value disabled selected>Select State</option>
+			</select>
+		</div>
+		<div class="row"> 
+			<label>City : </label>
+			<select name="city" id="city-list" class="InputBox">
+				<option value disabled selected>Select City </option>
+			</select>
+		</div>
+	</div>
+
+</body>
+</html>
